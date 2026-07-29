@@ -4,7 +4,7 @@ const INFO = [
   { label: "소속", value: "경상국립대학교 전자공학부\nGyeongsang National University\nElectronic Engineering" },
   {
     label: "회사(팀)",
-    value: "Playground ( AI Solution ) 대표",
+    value: "Playground ( AI Solution ) 팀장",
   },
   {
     label: "연구실",
@@ -15,11 +15,10 @@ const INFO = [
 
 // 한 문장에 하나씩만 담아 짧게 끊어 읽히도록 한다
 const INTRO = [
-  "AI Solution 팀 Playground를 이끌고 있습니다.",
   "팀원들과 함께 AI를 여러 분야에 직접 적용합니다.",
-  "EDCL 연구실 대표로 프로젝트를 기획하고 이끕니다.",
-  "배터리 관리 시스템(BMS)과 열 관리가 중심 주제입니다.",
-  "Ansys · MATLAB 해석에 AI를 얹어 배터리 상태를 예측합니다.",
+  "AI Solution 팀 Playground 팀장",
+  "EDCL 연구실 대표",
+  "주요 분야 - 배터리 관리 시스템(BMS), 열 관리, 배터리 상태 추정",
 ];
 
 export default function About() {
