@@ -5,8 +5,8 @@ const EMAIL = "junnie.c01@gmail.com";
 
 // 주소를 채우면 해당 링크가 자동으로 노출된다 (비어 있으면 렌더링되지 않음)
 const LINKS = [
-  { label: "GitHub", href: "" },
-  { label: "Instagram", href: "" },
+  { label: "GitHub", href: "https://github.com/junniec01-creator" },
+  { label: "Instagram", href: "https://www.instagram.com/jun.hy07?igsh=N2hlbWltejQ3NzIx" },
 ];
 
 export default function Contact() {

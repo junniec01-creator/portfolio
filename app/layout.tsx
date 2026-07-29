@@ -5,7 +5,7 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 
 export const metadata: Metadata = {
   // 배포 후 실제 도메인으로 교체 — OG 이미지 절대경로 생성에 쓰인다
-  metadataBase: new URL("https://junhyeok-portfolio.vercel.app"),
+  metadataBase: new URL("https://junhy-portfolio.vercel.app"),
   title: "포트폴리오 | 전자공학도 · BMS · Thermal · AI",
   description:
     "경상국립대학교 전자공학부 · EDCL Lab 대표 · BMS / 열관리 연구와 AI를 다루는 최준혁 포트폴리오",

@@ -14,7 +14,7 @@ export const awards: Award[] = [
     organizer: "우주항공청",
     year: "2025",
     rank: "최우수",
-    description: "초소형 위성의 군집운용과 링크를 통한 북극항로 개척 시스템",
+    description: "초소형 위성의 군집운용과 링크를 통한 **북극항로 개척 시스템**",
   },
   {
     id: 2,
