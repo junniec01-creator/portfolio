@@ -21,7 +21,7 @@ export default function Contact() {
         <div className="mx-auto mb-8 h-1 w-16 rounded-full bg-gradient-to-r from-accent to-accent-purple" />
 
         <p className="mb-10 text-muted">
-          협업이나 문의는 언제든 환영합니다.
+          협업 문의: 메일, github, instagram
         </p>
 
         <a

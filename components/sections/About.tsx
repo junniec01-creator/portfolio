@@ -16,9 +16,8 @@ const INFO = [
 // 한 문장에 하나씩만 담아 짧게 끊어 읽히도록 한다
 const INTRO = [
   "팀원들과 함께 AI를 여러 분야에 직접 적용합니다.",
-  "AI Solution 팀 Playground 팀장",
-  "EDCL 연구실 대표",
-  "주요 분야 - 배터리 관리 시스템(BMS), 열 관리, 배터리 상태 추정",
+  "AI Solution 팀 'Playground' - Product Produce",
+  "EDCL 연구실 - Battery Management System, Thermal Management",
 ];
 
 export default function About() {

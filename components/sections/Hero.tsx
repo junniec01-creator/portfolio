@@ -41,12 +41,9 @@ export default function Hero() {
           JUNHYEOK CHOE
         </h1>
         <p className="mt-8 max-w-2xl text-lg font-bold text-foreground [text-shadow:var(--hero-shadow)] sm:text-xl">
-          <span className="text-red-500 light:text-red-600">AI </span>와{" "}
-          <span className="text-red-500 light:text-red-600">기획 </span> 엔지니어,
-          <br className="sm:hidden" /> 맞춤형{" "}
-          <span className="text-red-500 light:text-red-600">AI Solution</span> 제공
-          <span className="mt-3 block text-sm font-semibold text-yellow-400 light:text-amber-600 sm:text-xl">
-            Playground 팀 대표 · EDCL Lab 대표 · Project Manager
+          <span className="text-brand">AI Solution</span> Engineer
+          <span className="mt-3 block text-sm font-semibold text-yellow-400 light:text-amber-700 sm:text-xl">
+            Playground 팀장 · EDCL Lab 대표 · Project Manager
           </span>
           <span className="mt-2 block text-sm font-semibold text-foreground/90 sm:text-xl">
             경상국립대학교 전자공학부

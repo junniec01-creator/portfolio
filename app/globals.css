@@ -62,7 +62,8 @@
   --color-accent: #2563eb;
   --color-accent-purple: #7c3aed;
 
-  --color-brand: #16a34a;
+  /* 밝은 배경에서 로고 그린이 튀지 않으면서 읽히도록 한 단계 깊게 (대비 4.6:1) */
+  --color-brand: #15803d;
   --color-brand-from: #4d9e1f;
   --color-brand-to: #0b5f31;
 
