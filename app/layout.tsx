@@ -1,7 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import ThemeProvider from "@/components/ui/ThemeProvider";
+
+// 페인트 전에 <html data-theme>을 확정해 첫 화면이 반대 색으로 깜빡이는 것을 막는다.
+// 저장된 선택이 있으면 그것을, 없으면 기기 설정을 따른다.
+const THEME_INIT = `(function(){try{var s=localStorage.getItem('theme');var t=(s==='light'||s==='dark')?s:(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();`;
 
 export const metadata: Metadata = {
   // 배포 후 실제 도메인으로 교체 — OG 이미지 절대경로 생성에 쓰인다
@@ -26,17 +31,30 @@ export const metadata: Metadata = {
   },
 };
 
+// 모바일 브라우저 주소창 색까지 테마에 맞춘다
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#090909" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f5f8" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html lang="ko" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ScrollToTop />
-        <Navbar />
-        {children}
+        <ThemeProvider>
+          <ScrollToTop />
+          <Navbar />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

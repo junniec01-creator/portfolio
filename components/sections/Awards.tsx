@@ -41,7 +41,7 @@ function CountUp({ to, duration = 1200 }: { to: number; duration?: number }) {
 
 export default function Awards() {
   return (
-    <section id="awards" className="mx-auto max-w-5xl px-6 py-28">
+    <section id="awards" className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
       <ScrollReveal>
         <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
           Awards
@@ -72,7 +72,7 @@ export default function Awards() {
                 </span>
                 <p className="text-sm text-muted">{award.organizer}</p>
               </div>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-muted">
+              <p className="whitespace-pre-line text-[0.9375rem] leading-relaxed text-muted sm:text-sm">
                 {renderDescription(award.description)}
               </p>
             </div>

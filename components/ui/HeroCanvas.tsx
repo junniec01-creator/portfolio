@@ -3,6 +3,7 @@
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useTheme } from "@/components/ui/ThemeProvider";
 
 // 노드를 한 칸씩 타고 이동하며 선을 순차 점화하는 전파 신호
 type Signal = {
@@ -12,7 +13,7 @@ type Signal = {
   interval: number; // 한 칸 이동에 걸리는 시간(초)
 };
 
-function NeuralNetwork() {
+function NeuralNetwork({ light }: { light: boolean }) {
   const group = useRef<THREE.Group>(null);
   const lineColorAttr = useRef<THREE.BufferAttribute>(null);
   const strikeTimer = useRef(0);
@@ -27,9 +28,6 @@ function NeuralNetwork() {
   const CONNECT_DIST = 0.95; // 이 거리 안의 노드끼리 선으로 연결
 
   const data = useMemo(() => {
-    const blue = new THREE.Color("#3B82F6");
-    const purple = new THREE.Color("#A855F7");
-
     // 단위 구 안에 균일 분포(cbrt) 후 축별로 늘려 타원형 필드로 분산
     const pts: THREE.Vector3[] = [];
     for (let i = 0; i < NODES; i++) {
@@ -46,11 +44,12 @@ function NeuralNetwork() {
     }
 
     const nodePositions = new Float32Array(NODES * 3);
-    const nodeColors = new Float32Array(NODES * 3);
+    // 색 자체가 아니라 파랑→보라 보간 비율만 저장한다.
+    // 테마가 바뀌어도 기하 구조를 다시 만들지 않고 색만 갈아끼우기 위함.
+    const nodeMix = new Float32Array(NODES);
     pts.forEach((p, i) => {
       nodePositions.set([p.x, p.y, p.z], i * 3);
-      const c = blue.clone().lerp(purple, (p.y / RY + 1) / 2);
-      nodeColors.set([c.r, c.g, c.b], i * 3);
+      nodeMix[i] = (p.y / RY + 1) / 2;
     });
 
     // 가까운 노드 쌍을 선분으로 연결 (+ 인접 그래프 구성)
@@ -80,7 +79,7 @@ function NeuralNetwork() {
 
     return {
       nodePositions,
-      nodeColors,
+      nodeMix,
       linePositions: new Float32Array(linePts),
       lineColors: new Float32Array(edgeCount * 6), // 엣지당 정점 2개 × rgb
       charges: new Float32Array(edgeCount), // 각 엣지의 방전 충전값 (0~1)
@@ -88,6 +87,18 @@ function NeuralNetwork() {
       edgeCount,
     };
   }, []);
+
+  // 노드 색 — 라이트 모드에서는 밝은 배경에 묻히지 않게 한 단계 진한 파랑·보라를 쓴다
+  const nodeColors = useMemo(() => {
+    const from = new THREE.Color(light ? "#1D4ED8" : "#3B82F6");
+    const to = new THREE.Color(light ? "#6D28D9" : "#A855F7");
+    const out = new Float32Array(data.nodeMix.length * 3);
+    for (let i = 0; i < data.nodeMix.length; i++) {
+      const c = from.clone().lerp(to, data.nodeMix[i]);
+      out.set([c.r, c.g, c.b], i * 3);
+    }
+    return out;
+  }, [data, light]);
 
   // 노드를 동그라미로 그리기 위한 원형 텍스처 (캔버스)
   const circleTexture = useMemo(() => {
@@ -105,9 +116,19 @@ function NeuralNetwork() {
     return new THREE.CanvasTexture(canvas);
   }, []);
 
-  // 방전 색상: 평소엔 어두운 시안, 점화되면 밝은 일렉트릭 시안
-  const BASE = useMemo(() => new THREE.Color("#0e5a6b").multiplyScalar(0.22), []);
-  const FLASH = useMemo(() => new THREE.Color("#22d3ee"), []);
+  // 방전 색상. 다크는 어두운 시안 → 밝은 일렉트릭 시안(가산 합성으로 발광),
+  // 라이트는 반대로 옅은 회청색 → 진한 시안이라 밝은 배경에서 선이 또렷하게 읽힌다.
+  const BASE = useMemo(
+    () =>
+      light
+        ? new THREE.Color("#a6b3c4")
+        : new THREE.Color("#0e5a6b").multiplyScalar(0.22),
+    [light],
+  );
+  const FLASH = useMemo(
+    () => new THREE.Color(light ? "#0e7490" : "#22d3ee"),
+    [light],
+  );
 
   // 한 번의 번개: 임의 노드에서 출발하는 전파 신호를 2~4개 생성.
   // 신호는 매 프레임이 아니라 interval 간격으로 한 칸씩 이동하며 선을 순차 점화한다.
@@ -201,7 +222,7 @@ function NeuralNetwork() {
       <points>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[data.nodePositions, 3]} />
-          <bufferAttribute attach="attributes-color" args={[data.nodeColors, 3]} />
+          <bufferAttribute attach="attributes-color" args={[nodeColors, 3]} />
         </bufferGeometry>
         <pointsMaterial
           size={0.09}
@@ -225,12 +246,15 @@ function NeuralNetwork() {
             args={[data.lineColors, 3]}
           />
         </bufferGeometry>
+        {/* 가산 합성은 밝은 배경에서 선이 사라지므로 라이트 모드에서는 일반 합성으로 바꾼다.
+            blending은 머티리얼 생성 시점 값이라 key로 다시 만들게 한다. */}
         <lineBasicMaterial
+          key={light ? "light" : "dark"}
           vertexColors
           transparent
-          opacity={0.55}
+          opacity={light ? 0.75 : 0.55}
           depthWrite={false}
-          blending={THREE.AdditiveBlending}
+          blending={light ? THREE.NormalBlending : THREE.AdditiveBlending}
         />
       </lineSegments>
     </group>
@@ -238,9 +262,11 @@ function NeuralNetwork() {
 }
 
 export default function HeroCanvas() {
+  const { theme } = useTheme();
+
   return (
     <Canvas className="h-full w-full" camera={{ position: [0, 0, 8.2], fov: 80 }}>
-      <NeuralNetwork />
+      <NeuralNetwork light={theme === "light"} />
     </Canvas>
   );
 }

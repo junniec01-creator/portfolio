@@ -7,10 +7,18 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 
 const GAP_PX = 24; // gap-6
 
+// 2행 고정이라 카드 2개가 한 열을 이룬다 — 점 하나가 곧 한 열
+const COLUMNS = Math.ceil(projects.length / 2);
+
 export default function ProjectScroller() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(true);
+  const [active, setActive] = useState(0);
+
+  // 한 열의 폭(카드 폭 + 간격). 뷰포트에 따라 달라져 그때그때 잰다.
+  const columnStep = useCallback((track: HTMLDivElement) => {
+    const card = track.firstElementChild as HTMLElement | null;
+    return card ? card.offsetWidth + GAP_PX : track.clientWidth * 0.8;
+  }, []);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -18,9 +26,14 @@ export default function ProjectScroller() {
 
     const update = () => {
       const max = track.scrollWidth - track.clientWidth;
-      setAtStart(track.scrollLeft <= 1);
-      // 스크롤이 필요 없을 만큼 카드가 적으면 max가 0이라 양쪽 끝으로 판정된다
-      setAtEnd(track.scrollLeft >= max - 1);
+      // 마지막 열은 폭이 남지 않아 step 배수에 닿지 못하므로 끝에서는 따로 처리
+      if (max > 0 && track.scrollLeft >= max - 1) {
+        setActive(COLUMNS - 1);
+        return;
+      }
+      const step = columnStep(track);
+      const index = step > 0 ? Math.round(track.scrollLeft / step) : 0;
+      setActive(Math.min(COLUMNS - 1, Math.max(0, index)));
     };
 
     update();
@@ -32,22 +45,23 @@ export default function ProjectScroller() {
       track.removeEventListener("scroll", update);
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [columnStep]);
 
-  const scrollByColumn = useCallback((direction: 1 | -1) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const card = track.firstElementChild as HTMLElement | null;
-    const step = card ? card.offsetWidth + GAP_PX : track.clientWidth * 0.8;
-    track.scrollBy({ left: direction * step, behavior: "smooth" });
-  }, []);
+  const goTo = useCallback(
+    (index: number) => {
+      const track = trackRef.current;
+      if (!track) return;
+      track.scrollTo({ left: index * columnStep(track), behavior: "smooth" });
+    },
+    [columnStep],
+  );
 
   return (
     <div className="relative">
       {/* 2행 고정 · 열 방향으로 채우고 넘치면 가로 스크롤 */}
       <div
         ref={trackRef}
-        className="grid snap-x snap-mandatory auto-cols-[80%] grid-flow-col grid-rows-2 gap-6 overflow-x-auto pb-4 sm:auto-cols-[360px]"
+        className="no-scrollbar grid snap-x snap-mandatory auto-cols-[85%] grid-flow-col grid-rows-2 gap-6 overflow-x-auto pb-1 sm:auto-cols-[360px]"
       >
         {projects.map((project, i) => (
           <ScrollReveal
@@ -60,27 +74,29 @@ export default function ProjectScroller() {
         ))}
       </div>
 
-      {/* 마우스 사용자를 위한 좌우 버튼 — 터치로 넘길 수 있는 모바일에서는 숨긴다 */}
-      <button
-        type="button"
-        aria-label="이전 프로젝트"
-        onClick={() => scrollByColumn(-1)}
-        className={`absolute -left-5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-subtle bg-card/90 text-lg text-foreground backdrop-blur transition-all hover:border-accent/50 hover:bg-card-hover sm:flex ${
-          atStart ? "pointer-events-none opacity-0" : "opacity-100"
-        }`}
-      >
-        ←
-      </button>
-      <button
-        type="button"
-        aria-label="다음 프로젝트"
-        onClick={() => scrollByColumn(1)}
-        className={`absolute -right-5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-subtle bg-card/90 text-lg text-foreground backdrop-blur transition-all hover:border-accent/50 hover:bg-card-hover sm:flex ${
-          atEnd ? "pointer-events-none opacity-0" : "opacity-100"
-        }`}
-      >
-        →
-      </button>
+      {/* 현재 위치 표시 겸 이동 버튼 */}
+      {COLUMNS > 1 && (
+        <div className="mt-5 flex items-center justify-center gap-1">
+          {Array.from({ length: COLUMNS }, (_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`프로젝트 ${i + 1}번째 묶음 보기`}
+              aria-current={i === active}
+              className="group flex h-9 w-9 items-center justify-center"
+            >
+              <span
+                className={`block h-2 rounded-full transition-all duration-300 ${
+                  i === active
+                    ? "w-6 bg-accent"
+                    : "w-2 bg-border-subtle group-hover:bg-muted"
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

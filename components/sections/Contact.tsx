@@ -13,7 +13,7 @@ export default function Contact() {
   const visibleLinks = LINKS.filter((link) => link.href);
 
   return (
-    <section id="contact" className="mx-auto max-w-5xl px-6 py-28">
+    <section id="contact" className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
       <ScrollReveal className="text-center">
         <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
           Contact
@@ -47,7 +47,7 @@ export default function Contact() {
           </div>
         )}
 
-        <div className="mt-28 flex flex-col items-center gap-3">
+        <div className="mt-20 flex flex-col items-center gap-3 sm:mt-28">
           <LottieGreeting />
           <p className="text-base font-semibold text-foreground sm:text-lg">
             끝까지 봐주셔서 감사합니다!

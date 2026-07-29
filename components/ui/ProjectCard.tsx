@@ -25,7 +25,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           )}
         </div>
 
-        <p className="mb-4 flex-1 text-sm leading-relaxed text-muted">
+        <p className="mb-4 flex-1 text-[0.9375rem] leading-relaxed text-muted sm:text-sm">
           {project.description}
         </p>
 

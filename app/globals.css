@@ -2,7 +2,10 @@
 /* 설치된 pretendard 패키지에서 로드 — 외부 CDN 호출 없음 */
 @import "pretendard/dist/web/variable/pretendardvariable.css";
 
-/* 기획서 컬러 팔레트 — Tailwind v4 테마 토큰 */
+/* html[data-theme="light"] 아래에서만 적용되는 변형 — light:text-... 형태로 쓴다 */
+@custom-variant light (&:where([data-theme="light"] *));
+
+/* 기본(다크) 팔레트 — Tailwind v4 테마 토큰 */
 @theme {
   --color-background: #090909;
   --color-foreground: #ffffff;
@@ -13,7 +16,76 @@
   --color-accent: #3b82f6;
   --color-accent-purple: #a855f7;
 
+  /* Playground 브랜드 그린 — 로고 그라데이션에서 추출 */
+  --color-brand: #22c55e;
+  --color-brand-from: #a3e635;
+  --color-brand-to: #0e7a3c;
+
   --font-sans: "Pretendard Variable", Pretendard, system-ui, sans-serif;
+}
+
+/* 유틸리티 클래스로 표현하기 어려운 값들 (그라데이션·그림자·스크롤바) */
+:root {
+  color-scheme: dark;
+
+  --hero-vignette: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(9, 9, 9, 0.65) 100%
+  );
+  --hero-glow: radial-gradient(
+    ellipse at center,
+    rgba(9, 9, 9, 0.6) 0%,
+    transparent 70%
+  );
+  --hero-shadow: 0 3px 20px rgba(0, 0, 0, 0.9);
+  --hero-shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.85);
+
+  --logo-from: #a3e635;
+  --logo-mid: #22c55e;
+  --logo-to: #0e7a3c;
+
+  --scrollbar-track: #090909;
+  --scrollbar-thumb: #3b82f6;
+}
+
+/* 라이트(그레이 계열) 팔레트 */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-background: #f4f5f8;
+  --color-foreground: #16181d;
+  --color-muted: #545b69;
+  --color-card: #ffffff;
+  --color-card-hover: #e9ebf0;
+  --color-border-subtle: #d8dbe2;
+  --color-accent: #2563eb;
+  --color-accent-purple: #7c3aed;
+
+  --color-brand: #16a34a;
+  --color-brand-from: #4d9e1f;
+  --color-brand-to: #0b5f31;
+
+  /* 밝은 배경 위에서는 흰 베일로 가장자리를 덜어낸다 */
+  --hero-vignette: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(244, 245, 248, 0.8) 100%
+  );
+  --hero-glow: radial-gradient(
+    ellipse at center,
+    rgba(244, 245, 248, 0.82) 0%,
+    transparent 70%
+  );
+  --hero-shadow: 0 2px 16px rgba(244, 245, 248, 0.95);
+  --hero-shadow-sm: 0 2px 12px rgba(244, 245, 248, 0.9);
+
+  --logo-from: #74b816;
+  --logo-mid: #16a34a;
+  --logo-to: #0b5f31;
+
+  --scrollbar-track: #e9ebf0;
+  --scrollbar-thumb: #2563eb;
 }
 
 html {
@@ -25,6 +97,27 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 고정 상단바(h-16)에 섹션 제목이 가리지 않도록 */
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* 스크롤바를 숨기는 영역 — 위치는 점 인디케이터가 알려주므로 막대가 필요 없다.
+   가로 스크롤바가 차지하는 높이 때문에 세로 스크롤바까지 생기던 문제도 함께 사라진다. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* 커스텀 스크롤바 */
@@ -33,9 +126,9 @@ body {
   height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #090909;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
+  background: var(--scrollbar-thumb);
   border-radius: 2px;
 }

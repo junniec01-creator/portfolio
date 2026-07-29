@@ -13,9 +13,18 @@ const INFO = [
   { label: "관심사", value: "AI Solution · BMS ( Battery Management System ) · Thermal Management\nAI 기반 배터리 상태 예측" },
 ];
 
+// 한 문장에 하나씩만 담아 짧게 끊어 읽히도록 한다
+const INTRO = [
+  "AI Solution 팀 Playground를 이끌고 있습니다.",
+  "팀원들과 함께 AI를 여러 분야에 직접 적용합니다.",
+  "EDCL 연구실 대표로 프로젝트를 기획하고 이끕니다.",
+  "배터리 관리 시스템(BMS)과 열 관리가 중심 주제입니다.",
+  "Ansys · MATLAB 해석에 AI를 얹어 배터리 상태를 예측합니다.",
+];
+
 export default function About() {
   return (
-    <section id="about" className="mx-auto max-w-5xl px-6 py-28">
+    <section id="about" className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
       <ScrollReveal>
         <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
           About
@@ -23,16 +32,15 @@ export default function About() {
         <div className="mb-12 h-1 w-16 rounded-full bg-gradient-to-r from-accent to-accent-purple" />
       </ScrollReveal>
 
-      <ScrollReveal delay={0.1}>
-        <p className="mb-12 max-w-3xl text-base leading-relaxed text-muted">
-          현재 Playground 팀의 대표를 맡아 운영중이며, 
-          팀원들과 AI Solution을 다양한 분야에 적용시키고 있습니다. 
-          EDCL 연구실 대표로 프로젝트를 기획하고 이끌며, 
-          배터리 관리 시스템(BMS)과 열 관리를 중심으로 연구하고 있습니다.
-          해당 연구실에서는 연구팀원들과 함께 Ansys · MATLAB 기반 해석에
-          AI 모델을 접목해 배터리 상태를 예측하는 방향으로 역량을 넓히고 있습니다.
-        </p>
-      </ScrollReveal>
+      <div className="mb-14 max-w-3xl space-y-3">
+        {INTRO.map((line, i) => (
+          <ScrollReveal key={line} delay={0.1 + i * 0.06}>
+            <p className="text-base leading-relaxed text-foreground sm:text-lg">
+              {line}
+            </p>
+          </ScrollReveal>
+        ))}
+      </div>
 
       <div className="space-y-6">
         {INFO.map((item, i) => (
