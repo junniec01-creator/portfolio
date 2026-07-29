@@ -23,7 +23,7 @@ const INTRO = [
 
 export default function About() {
   return (
-    <section id="about" className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
+    <section id="about" className="mx-auto max-w-5xl px-6 py-28">
       <ScrollReveal>
         <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
           About
